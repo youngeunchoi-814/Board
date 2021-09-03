@@ -40,27 +40,57 @@
  </tbody>
 
 </table>
+
 <div>
-<c:if test="${page.prev}">
- <span>[ <a href="/board/listPageSearch?num=${page.startPageNum - 1}">이전</a> ]</span>
+ <c:if test="${page.prev}">
+ <span>[ <a href="/board/listPageSearch?num=${page.startPageNum - 1}${page.searchTypeKeyword}">이전</a> ]</span>
 </c:if>
 
 <c:forEach begin="${page.startPageNum}" end="${page.endPageNum}" var="num">
-  <span>
-   <c:if test="${select != num}">
-   <a href="/board/listPageSearch?num=${num}">${num}</a>
+ <span>
+ 
+  <c:if test="${select != num}">
+   <a href="/board/listPageSearch?num=${num}${page.searchTypeKeyword}">${num}</a>
   </c:if>    
   
   <c:if test="${select == num}">
    <b>${num}</b>
   </c:if>
+    
  </span>
 </c:forEach>
 
 <c:if test="${page.next}">
- <span>[ <a href="/board/listPageSearch?num=${page.endPageNum + 1}">다음</a> ]</span>
+ <span>[ <a href="/board/listPageSearch?num=${page.endPageNum + 1}${page.searchTypeKeyword}">다음</a> ]</span>
 </c:if>
-
 </div>
+<div>
+ <div>
+  <select name="searchType">
+      <option value="title">제목</option>
+         <option value="content">내용</option>
+      <option value="title_content">제목+내용</option>
+      <option value="writer">작성자</option>
+  </select>
+  
+  <input type="text" name="keyword" />
+  
+  <button type="button" id="searchBtn">검색</button>
+ </div>
+</div>
+
+<script>
+
+ document.getElementById("searchBtn").onclick = function () {
+    
+  let searchType = document.getElementsByName("searchType")[0].value;
+  let keyword =  document.getElementsByName("keyword")[0].value;
+  
+  location.href = "/board/listPageSearch?num=1" + "&searchType=" + searchType + "&keyword=" + keyword;
+  
+  console.log(searchType)
+  console.log(keyword)
+ };
+</script>
 </body>
 </html>

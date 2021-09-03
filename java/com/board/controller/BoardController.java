@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.board.domain.BoardVO;
 import com.board.domain.Page;
+
 import com.board.service.BoardService;
+
 
 @Controller
 @RequestMapping("/board/*")
@@ -20,7 +22,7 @@ public class BoardController {
 
 	 @Inject
 	 private BoardService service;
-
+	
 	 //게시물 목록
 	 @RequestMapping(value = "/list", method = RequestMethod.GET)
 	 public void getList(Model model) throws Exception {
@@ -49,6 +51,7 @@ public class BoardController {
 		BoardVO vo = service.view(bno);
 		
 		model.addAttribute("view", vo);
+		
 
 	}
 	
@@ -84,6 +87,7 @@ public class BoardController {
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
 	public void getListPage(Model model, @RequestParam("num") int num) throws Exception {
 		
+	
 		Page page = new Page();
 		
 		page.setNum(num);
@@ -91,23 +95,23 @@ public class BoardController {
 
 		List<BoardVO> list = null; 
 		list = service.listPage(page.getDisplayPost(), page.getPostNum());
-		
-		model.addAttribute("list", list);
+
+		model.addAttribute("list", list);   
 		model.addAttribute("page", page);
-		model.addAttribute("select", num);
-		
-		/* 
+		/*
 		model.addAttribute("pageNum", page.getPageNum());
 
 		model.addAttribute("startPageNum", page.getStartPageNum());
 		model.addAttribute("endPageNum", page.getEndPageNum());
 		 
 		  model.addAttribute("prev", page.getPrev());
-		model.addAttribute("next", page.getNext());  */
-	
+		model.addAttribute("next", page.getNext()); 
+		*/ 
+
+		model.addAttribute("select", num);
 		
-		
-		/* 게시물 총 갯수
+		/*
+		 //게시물 총 갯수
 		 int count = service.count();
 		  
 		 // 한 페이지에 출력할 게시물 갯수
@@ -140,11 +144,10 @@ public class BoardController {
 		boolean next = endPageNum * pageNum_cnt >= count ? false : true;
 		
 		
-		List<BoardVO> list = null; 
+		List<BoardVO> list = null; 		
 		list = service.listPage(displayPost, postNum);
-		
-		model.addAttribute("list", list);
-		model.addAttribute("select", num);
+		model.addAttribute("list",list);
+		model.addAttribute("pageNum", pageNum);
 		
 		// 시작 및 끝 번호
 		model.addAttribute("startPageNum", startPageNum);
@@ -156,6 +159,33 @@ public class BoardController {
 		
 		// 현재 페이지
 		model.addAttribute("select", num);*/
+	}
+	// 게시물 목록 + 페이징 추가 + 검색
+	@RequestMapping(value = "/listPageSearch", method = RequestMethod.GET)
+	public void getListPageSearch(Model model, @RequestParam("num") int num, 
+			@RequestParam(value = "searchType",required = false, defaultValue = "title") String searchType,
+			@RequestParam(value = "keyword",required = false, defaultValue = "") String keyword
+	  ) throws Exception {
+
+	 
+	 Page page = new Page();
+	 
+	 page.setNum(num);
+	 page.setCount(service.count());  
+	
+	 
+	// 검색 타입과 검색어
+	 page.setSearchTypeKeyword(searchType, keyword);
+	 
+	 List<BoardVO> list = null; 
+	 //list = service.listPage(page.getDisplayPost(), page.getPostNum());
+	 list = service.listPageSearch(page.getDisplayPost(), page.getPostNum(), searchType, keyword);
+	 
+	 model.addAttribute("list", list);
+	 model.addAttribute("page", page);
+	 model.addAttribute("select", num);
+	 
+	 
 	}
 	
 	
